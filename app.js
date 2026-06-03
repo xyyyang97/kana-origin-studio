@@ -253,6 +253,10 @@ function renderVoices() {
   }
   voices = window.speechSynthesis.getVoices().filter((voice) => voice.lang?.toLowerCase().startsWith("ja"));
   const options = voices.length ? voices : window.speechSynthesis.getVoices();
+  if (!options.length) {
+    $("#voiceSelect").innerHTML = `<option value="">自动选择</option>`;
+    return;
+  }
   $("#voiceSelect").innerHTML = options
     .map((voice) => `<option value="${voice.voiceURI}">${voice.name}</option>`)
     .join("");
