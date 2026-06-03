@@ -3,25 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="Kana Origin Studio 通过字源、发音、闪卡和测验帮助你高效记忆平假名与片假名。支持手机适配、离线缓存和内置日语音频。" />
+    <meta name="description" content="Kana Origin Studio 通过字源、发音、闪卡和测验帮助你高效记忆平假名与片假名。支持手机适配、离线缓存和真人日语音频。" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta name="theme-color" content="#f5f5f7" />
     <meta property="og:title" content="Kana Origin Studio" />
-    <meta property="og:description" content="用字源和发音高效记忆五十音，支持闪卡、测验、离线缓存、内置音频和手机适配。" />
+    <meta property="og:description" content="用字源和发音高效记忆五十音，支持闪卡、测验、离线缓存、真人音频和手机适配。" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://xyyyang97.github.io/kana-origin-studio/" />
     <meta property="og:image" content="https://xyyyang97.github.io/kana-origin-studio/origin-hiragana.svg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Kana Origin Studio" />
-    <meta name="twitter:description" content="用字源和发音高效记忆五十音，支持闪卡、测验、离线缓存、内置音频和手机适配。" />
+    <meta name="twitter:description" content="用字源和发音高效记忆五十音，支持闪卡、测验、离线缓存、真人音频和手机适配。" />
     <title>Kana Origin Studio</title>
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"WebSite","name":"Kana Origin Studio","url":"https://xyyyang97.github.io/kana-origin-studio/","description":"用字源、发音、闪卡和测验高效记忆平假名与片假名。"}
+    </script>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icon.svg" />
     <link rel="canonical" href="https://xyyyang97.github.io/kana-origin-studio/" />
     <link rel="preconnect" href="https://commons.wikimedia.org" />
     <link rel="preconnect" href="https://upload.wikimedia.org" />
-    <link rel="stylesheet" href="./styles.css?v=20260604b" />
+    <link rel="stylesheet" href="./styles.css?v=20260604c" />
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -49,7 +52,7 @@
           <p class="eyebrow">日语五十音 · 汉字字源记忆法</p>
           <h1>把假名看回它原来的汉字。</h1>
           <p class="lead">
-            用大字卡、内置日语音频、草书/楷书来源和即时测验，把平假名与片假名一起记住。
+            用大字卡、真人日语音频、草书/楷书来源、例词和即时测验，把平假名与片假名一起记住。
           </p>
           <div class="hero-actions">
             <a class="primary-action" href="#study">开始练习</a>
@@ -97,7 +100,7 @@
           <label>
             发音
             <select id="audioMode" aria-describedby="audioStatus">
-              <option value="human">内置音频</option>
+              <option value="human">真人音频</option>
               <option value="system">系统语音</option>
             </select>
           </label>
@@ -128,7 +131,7 @@
           <div class="card-face front">
             <span id="cardScriptLabel">平假名</span>
             <strong id="cardKana">あ</strong>
-            <small>空格翻面 · A/S/D/F 快速循环</small>
+            <small>空格翻面 · A/S/D/F 或 J/K/L 循环</small>
           </div>
           <div class="card-face back">
             <span id="cardRomaji">a</span>
@@ -148,6 +151,7 @@
             </div>
             <p id="cardMnemonic">安写快了，收成あ。先看上方弯，再收尾。</p>
             <p class="card-subnote">如果你觉得字体里的草书还不够像，直接往下看演变总图，那里的中间态更接近真实字形来源。</p>
+            <div class="word-chip" id="cardExample">例词：あさ · 朝 · 早晨</div>
           </div>
         </article>
         <div class="study-actions">
@@ -182,7 +186,7 @@
         <div class="section-head">
           <p class="eyebrow">Keyboard Loop</p>
           <h2>手不用离开键盘</h2>
-          <p>适合电脑上快速刷：空格翻面；闪卡区用 A/S/D/F 做上一张、听音、记住、下一张；测验区用 A/S/D/F 选答案，/ 聚焦输入框。</p>
+          <p>适合电脑上快速刷：空格翻面；闪卡区用 A/S/D/F 或 J/K/L 做上一张、听音、记住、下一张；测验区可以用 A/S/D/F 或 1-4 选答案，/ 聚焦输入框。</p>
         </div>
         <div class="shortcut-grid" aria-label="快捷键说明">
           <div><kbd>Space</kbd><span>翻牌</span></div>
@@ -190,12 +194,22 @@
           <div><kbd>S</kbd><span>听音 / 选项 2</span></div>
           <div><kbd>D</kbd><span>记住 / 选项 3</span></div>
           <div><kbd>F</kbd><span>下一张 / 选项 4</span></div>
-          <div><kbd>J</kbd><span>兼容上一张</span></div>
-          <div><kbd>K</kbd><span>兼容记住</span></div>
-          <div><kbd>L</kbd><span>兼容下一张</span></div>
+          <div><kbd>J</kbd><span>上一张</span></div>
+          <div><kbd>K</kbd><span>记住</span></div>
+          <div><kbd>L</kbd><span>下一张</span></div>
           <div><kbd>/</kbd><span>输入答案</span></div>
           <div><kbd>Enter</kbd><span>检查</span></div>
+          <div><kbd>1-4</kbd><span>兼容数字选项</span></div>
         </div>
+      </section>
+
+      <section class="drill" id="contrast">
+        <div class="section-head">
+          <p class="eyebrow">Contrast</p>
+          <h2>易混淆字对训练</h2>
+          <p>当你总在某几组字上出错，继续刷全表效率很低。这里把高频混淆字拆出来，专门对照看差异。</p>
+        </div>
+        <div class="contrast-grid" id="contrastGrid" aria-label="易混淆字对"></div>
       </section>
 
       <section class="drawer" id="sources">
@@ -212,9 +226,9 @@
             </figcaption>
           </figure>
           <figure class="origin-atlas">
-            <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Katakana_origine.svg" alt="片假名从汉字楷书部件截取演变而来的总览图" loading="lazy" />
+            <img src="./origin-katakana.svg" alt="片假名从汉字楷书部件截取演变而来的总览图" loading="lazy" />
             <figcaption>
-              片假名演变图：来源汉字被切成部件后的骨架总览。来自 Wikimedia Commons。
+              片假名演变图：来源汉字被切成部件后的骨架总览。本地内置，离线也可查看。
             </figcaption>
           </figure>
         </div>
@@ -236,10 +250,10 @@
         <a href="https://kana.pro/" target="_blank" rel="noreferrer">Kana Pro</a>
         的测验机制，以及
         <a href="https://en.wikipedia.org/wiki/Man%27y%C5%8Dgana" target="_blank" rel="noreferrer">万叶假名字源表</a>。
-        发音优先使用站点内置日语音频，缺失时回退到 Wikimedia Commons 与浏览器系统语音。
+        发音优先使用站点真人音频，缺失时回退到 Wikimedia Commons 与浏览器系统语音。
       </p>
     </footer>
 
-    <script src="./app.js?v=20260604b"></script>
+    <script src="./app.js?v=20260604c"></script>
   </body>
 </html>

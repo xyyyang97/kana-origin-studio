@@ -128,7 +128,7 @@ function updateAudioStatus() {
   if (!status) return;
   if (audioMode === "human") {
     if (select) select.disabled = true;
-    status.textContent = "优先播放站点内置音频；缺失时再回退到外部真人音频和系统语音。";
+    status.textContent = "优先播放真人音频；缺失时再回退到系统语音。";
     return;
   }
   if (!("speechSynthesis" in window)) {
@@ -194,7 +194,7 @@ function renderGrid() {
   const items = activeItems();
   grid.innerHTML = items
     .map((item, index) => {
-      const showMode = mode === "katakana" ? "katakana" : "hiragana";
+      const showMode = currentScriptForItem(index);
       const mastered = isKnown(item, showMode) ? " · 已掌握" : "";
       return `
         <button type="button" class="kana-cell" data-index="${kanaData.indexOf(item)}" aria-label="${item.row} ${item.romaji} ${scriptLabel(showMode)}${mastered}">
@@ -297,10 +297,6 @@ function audioName(romaji) {
   return names[romaji] || "";
 }
 
-function localAudioUrl(item) {
-  return `./audio/${item.romaji}.wav`;
-}
-
 function playAudioFile(src) {
   return new Promise((resolve, reject) => {
     const audio = new Audio(src);
@@ -310,10 +306,6 @@ function playAudioFile(src) {
     audio.addEventListener("error", () => reject(new Error(`Audio failed: ${src}`)), { once: true });
     audio.play().then(resolve).catch(reject);
   });
-}
-
-async function playLocalAudio(item) {
-  await playAudioFile(localAudioUrl(item));
 }
 
 async function playHumanAudio(item) {
@@ -339,16 +331,11 @@ function speakSystem(text) {
 async function speakItem(item) {
   if (audioMode === "human") {
     try {
-      await playLocalAudio(item);
-      return;
-    } catch (error) {
-      try {
       await playHumanAudio(item);
       return;
-      } catch (remoteError) {
+    } catch (error) {
       speakSystem(item.hira);
       return;
-      }
     }
   }
   speakSystem(item.hira);

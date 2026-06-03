@@ -1,15 +1,15 @@
 # Kana Origin Studio
 
-一个为中文母语者设计的日语假名学习站，用汉字字源、内置发音、翻牌和测验，把五十音记忆做得更稳定。
+一个为中文母语者设计的日语假名学习站，用汉字字源、真人发音、翻牌和测验，把五十音记忆做得更稳定。
 
 当前重点：
 
 - 苹果官网风格的静态 H5 页面
 - 平假名 / 片假名 / 混合学习
 - 五十音全表 + 字源速查
-- 空格翻牌，`A/S/D/F` 快捷循环，`/` 聚焦输入框
+- 空格翻牌，`J/K/L` 快捷循环，`S` 播放发音，`1-4` 选择测验答案，`/` 聚焦输入框
 - 错题加权测验
-- 站点内置日语音频，缺失时回退到外部音频和系统语音
+- 真人日语音频优先，缺失时回退到系统语音
 - PWA 基础离线缓存
 
 ## 产品思路
@@ -44,13 +44,13 @@ python3 -m http.server 4173
 ```bash
 cd "/Users/andysong/iCloud Drive (Archive)/Documents/New project/kana-origin-studio"
 git add .
-git commit -m "Improve kana study UX and bundled audio"
+git commit -m "Improve kana study UX and audio flow"
 git push origin main
 ```
 
 ## 后续可继续做
 
 - 每个假名单独显示更精确的草书中间态裁切图
-- 加入浊音、半浊音、拗音课程包和对应内置音频
+- 加入浊音、半浊音、拗音课程包和对应真人音频支持
 - 增加易混淆字对训练，比如 `さ/き`、`ぬ/め`、`シ/ツ`
 - 增加例词记忆模式，而不只停留在单假名

@@ -6,7 +6,7 @@
   "display": "standalone",
   "background_color": "#f5f5f7",
   "theme_color": "#f5f5f7",
-  "description": "五十音图、假名字源、内置音频、闪卡和测验练习。",
+  "description": "五十音图、假名字源、真人音频、闪卡和测验练习。",
   "icons": [
     {
       "src": "./icon.svg",
