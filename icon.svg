@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Kana Origin Studio">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="1" stop-color="#e9eef9" />
+    </linearGradient>
+    <linearGradient id="ink" x1="118" y1="126" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1d1d1f" />
+      <stop offset="1" stop-color="#0b5fd7" />
+    </linearGradient>
+  </defs>
+  <rect x="32" y="32" width="448" height="448" rx="104" fill="url(#bg)" />
+  <circle cx="164" cy="166" r="44" fill="#0071e3" opacity="0.16" />
+  <circle cx="364" cy="342" r="62" fill="#138a55" opacity="0.16" />
+  <rect x="116" y="118" width="280" height="276" rx="78" fill="white" stroke="#d8dce6" stroke-width="8" />
+  <path d="M166 194c0-34 28-62 62-62h16c34 0 62 28 62 62v122c0 34-28 62-62 62h-16c-34 0-62-28-62-62V194Z" fill="none" stroke="url(#ink)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M236 146v220M196 216h80M196 276h80" fill="none" stroke="url(#ink)" stroke-width="24" stroke-linecap="round" />
+  <circle cx="342" cy="186" r="14" fill="#0071e3" />
+  <circle cx="348" cy="332" r="18" fill="#138a55" />
+</svg>

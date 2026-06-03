@@ -5,7 +5,7 @@ const kanaData = [
   { row: "元音", romaji: "e", hira: "え", kata: "エ", hiraOrigin: "衣", kataOrigin: "江", hint: "衣的草写转折成え；江的工部被截成エ。" },
   { row: "元音", romaji: "o", hira: "お", kata: "オ", hiraOrigin: "於", kataOrigin: "於", hint: "於的草写绕出お；オ像於字中的利落骨架。" },
   { row: "K 行", romaji: "ka", hira: "か", kata: "カ", hiraOrigin: "加", kataOrigin: "加", hint: "加的力部就是カ，草写后左弯成か。" },
-  { row: "K 行", romaji: "ki", hira: "き", kata: "キ", hiraOrigin: "機", kataOrigin: "機", hint: "機的木旁横竖抽出来像キ，草写多一笔成き。" },
+  { row: "K 行", romaji: "ki", hira: "き", kata: "キ", hiraOrigin: "幾", kataOrigin: "幾", hint: "幾的连续折势更接近き；片假名保留利落骨架成キ。" },
   { row: "K 行", romaji: "ku", hira: "く", kata: "ク", hiraOrigin: "久", kataOrigin: "久", hint: "久的撇捺简化成一个弯角，像く/ク。" },
   { row: "K 行", romaji: "ke", hira: "け", kata: "ケ", hiraOrigin: "計", kataOrigin: "介", hint: "計草写留下竖与右勾；介上部截取成ケ。" },
   { row: "K 行", romaji: "ko", hira: "こ", kata: "コ", hiraOrigin: "己", kataOrigin: "己", hint: "己的上下边被分开，就很好认こ/コ。" },
@@ -29,14 +29,14 @@ const kanaData = [
   { row: "H 行", romaji: "fu", hira: "ふ", kata: "フ", hiraOrigin: "不", kataOrigin: "不", hint: "不的下部散开成ふ，顶部截成フ。" },
   { row: "H 行", romaji: "he", hira: "へ", kata: "ヘ", hiraOrigin: "部", kataOrigin: "部", hint: "部的右部走势简化为山形へ/ヘ。" },
   { row: "H 行", romaji: "ho", hira: "ほ", kata: "ホ", hiraOrigin: "保", kataOrigin: "保", hint: "保里的木形像ホ，草写后加竖弯成ほ。" },
-  { row: "M 行", romaji: "ma", hira: "ま", kata: "マ", hiraOrigin: "末", kataOrigin: "末", hint: "末的横竖草写成ま；片假名取上部转折成マ。" },
+  { row: "M 行", romaji: "ma", hira: "ま", kata: "マ", hiraOrigin: "末", kataOrigin: "万", hint: "末的横竖草写成ま；万的起笔与转折更接近片假名マ。" },
   { row: "M 行", romaji: "mi", hira: "み", kata: "ミ", hiraOrigin: "美", kataOrigin: "三", hint: "美草写成み；三的三横就是ミ。" },
   { row: "M 行", romaji: "mu", hira: "む", kata: "ム", hiraOrigin: "武", kataOrigin: "牟", hint: "武草写有回环成む；牟下部收成ム。" },
   { row: "M 行", romaji: "me", hira: "め", kata: "メ", hiraOrigin: "女", kataOrigin: "女", hint: "女的交叉骨架像メ，草写绕开成め。" },
   { row: "M 行", romaji: "mo", hira: "も", kata: "モ", hiraOrigin: "毛", kataOrigin: "毛", hint: "毛的横竖钩能看出も/モ。" },
   { row: "Y 行", romaji: "ya", hira: "や", kata: "ヤ", hiraOrigin: "也", kataOrigin: "也", hint: "也的斜挑和竖弯留下や/ヤ。" },
   { row: "Y 行", romaji: "yu", hira: "ゆ", kata: "ユ", hiraOrigin: "由", kataOrigin: "由", hint: "由的框线连写成ゆ，片假名取中间框成ユ。" },
-  { row: "Y 行", romaji: "yo", hira: "よ", kata: "ヨ", hiraOrigin: "与", kataOrigin: "與", hint: "与的草写成よ；與的层叠横线简化成ヨ。" },
+  { row: "Y 行", romaji: "yo", hira: "よ", kata: "ヨ", hiraOrigin: "与", kataOrigin: "与", hint: "与的草写成よ；同一个字的横向骨架被压平成ヨ。" },
   { row: "R 行", romaji: "ra", hira: "ら", kata: "ラ", hiraOrigin: "良", kataOrigin: "良", hint: "良的上部像ラ，草写后收成ら。" },
   { row: "R 行", romaji: "ri", hira: "り", kata: "リ", hiraOrigin: "利", kataOrigin: "利", hint: "利的刀旁两笔就是リ，草写也保留两笔感。" },
   { row: "R 行", romaji: "ru", hira: "る", kata: "ル", hiraOrigin: "留", kataOrigin: "流", hint: "留草写成る；流的右下两笔像ル。" },
@@ -56,12 +56,91 @@ let deferredInstallPrompt = null;
 let audioMode = localStorage.getItem("kana-audio-mode") || "human";
 let selectedVoiceURI = localStorage.getItem("kana-voice-uri") || "";
 let voices = [];
-const stats = JSON.parse(localStorage.getItem("kana-stats") || '{"known":[],"correct":0,"total":0,"streak":0}');
+const stats = normalizeStats(JSON.parse(localStorage.getItem("kana-stats") || "{}"));
 
 const $ = (selector) => document.querySelector(selector);
 const grid = $("#kanaGrid");
 const rowFilter = $("#rowFilter");
 const flashCard = $("#flashCard");
+
+function normalizeStats(raw) {
+  const base = { known: [], correct: 0, total: 0, streak: 0, review: {} };
+  if (!raw || typeof raw !== "object") return base;
+  const known = Array.isArray(raw.known) ? raw.known.filter((item) => typeof item === "string") : [];
+  const review = raw.review && typeof raw.review === "object" && !Array.isArray(raw.review) ? raw.review : {};
+  return {
+    ...base,
+    ...raw,
+    known: [...new Set(known)],
+    review
+  };
+}
+
+function itemKey(item, scriptMode) {
+  return `${item.romaji}-${scriptMode}`;
+}
+
+function getReviewRecord(key) {
+  if (!stats.review[key]) {
+    stats.review[key] = { correct: 0, wrong: 0 };
+  }
+  return stats.review[key];
+}
+
+function isKnown(item, scriptMode) {
+  return stats.known.includes(itemKey(item, scriptMode));
+}
+
+function shuffle(items) {
+  const list = items.slice();
+  for (let i = list.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+
+function weightedPick(items, weightForItem) {
+  const weighted = items.map((item) => ({ item, weight: Math.max(1, weightForItem(item)) }));
+  const total = weighted.reduce((sum, entry) => sum + entry.weight, 0);
+  if (!total) return items[0] || null;
+  let cursor = Math.random() * total;
+  for (const entry of weighted) {
+    cursor -= entry.weight;
+    if (cursor <= 0) return entry.item;
+  }
+  return weighted[weighted.length - 1]?.item || null;
+}
+
+function quizWeight(item, scriptMode) {
+  const key = itemKey(item, scriptMode);
+  const review = getReviewRecord(key);
+  const unseenBonus = review.correct + review.wrong === 0 ? 2.5 : 0;
+  const wrongBias = review.wrong * 2.2;
+  const masteryBias = review.correct * 0.45;
+  const knownPenalty = isKnown(item, scriptMode) ? -1.1 : 1;
+  return 2 + unseenBonus + wrongBias - masteryBias + knownPenalty;
+}
+
+function updateAudioStatus() {
+  const status = $("#audioStatus");
+  const select = $("#voiceSelect");
+  if (!status) return;
+  if (audioMode === "human") {
+    if (select) select.disabled = true;
+    status.textContent = "优先播放站点内置音频；缺失时再回退到外部真人音频和系统语音。";
+    return;
+  }
+  if (!("speechSynthesis" in window)) {
+    if (select) select.disabled = true;
+    status.textContent = "系统语音不可用";
+    return;
+  }
+  if (select) select.disabled = false;
+  const available = window.speechSynthesis.getVoices();
+  const selected = available.find((voice) => voice.voiceURI === selectedVoiceURI) || available.find((voice) => voice.lang?.toLowerCase().startsWith("ja")) || available[0];
+  status.textContent = selected ? `系统语音 · ${selected.name}` : "系统语音 · 自动选择";
+}
 
 function scriptLabel(scriptMode = mode) {
   if (scriptMode === "katakana") return "片假名";
@@ -107,7 +186,7 @@ function updateStats() {
 
 function renderRows() {
   rowFilter.innerHTML = rows
-    .map((name) => `<button class="row-chip ${name === row ? "active" : ""}" data-row="${name}">${name}</button>`)
+    .map((name) => `<button type="button" class="row-chip ${name === row ? "active" : ""}" data-row="${name}" aria-pressed="${name === row}">${name}</button>`)
     .join("");
 }
 
@@ -116,8 +195,9 @@ function renderGrid() {
   grid.innerHTML = items
     .map((item, index) => {
       const showMode = mode === "katakana" ? "katakana" : "hiragana";
+      const mastered = isKnown(item, showMode) ? " · 已掌握" : "";
       return `
-        <button class="kana-cell" data-index="${kanaData.indexOf(item)}">
+        <button type="button" class="kana-cell" data-index="${kanaData.indexOf(item)}" aria-label="${item.row} ${item.romaji} ${scriptLabel(showMode)}${mastered}">
           <span class="cell-top"><span>${item.row}</span><span>${scriptLabel(showMode)}</span></span>
           <span class="kana-main"><strong>${kanaFor(item, showMode)}</strong><span>${item.romaji}</span></span>
           <span class="origin-mini"><span>${originLabel(showMode)} ${originFor(item, showMode)}</span><span>${index + 1}/${items.length}</span></span>
@@ -133,13 +213,15 @@ function renderCard() {
   cardIndex = (cardIndex + items.length) % items.length;
   const item = items[cardIndex];
   const showMode = currentScriptForItem(cardIndex);
+  const mastered = isKnown(item, showMode);
   $("#cardScriptLabel").textContent = scriptLabel(showMode);
   $("#cardKana").textContent = kanaFor(item, showMode);
   $("#cardRomaji").textContent = item.romaji;
   $("#cardOriginLabel").textContent = originLabel(showMode);
   $("#cardOrigin").textContent = originFor(item, showMode);
   $("#cardPath").textContent = `${originFor(item, showMode)} → ${kanaFor(item, showMode)}`;
-  $("#cardMnemonic").textContent = item.hint;
+  $("#cardMnemonic").textContent = mastered ? `${item.hint} 这个卡片已经标记过掌握了，可以继续复习巩固。` : item.hint;
+  flashCard.dataset.mastered = String(mastered);
   flashCard.classList.remove("flipped");
   saveStats();
 }
@@ -150,11 +232,15 @@ function showDetail(globalIndex) {
     <p class="eyebrow">${item.row} · ${item.romaji}</p>
     <h2>${item.hira} / ${item.kata}</h2>
     <div class="detail-kana">
-      <div><span>平假名 · 草书来源 ${item.hiraOrigin}</span><strong>${item.hira}</strong></div>
-      <div><span>片假名 · 楷书来源 ${item.kataOrigin}</span><strong>${item.kata}</strong></div>
+      <div><span>平假名 · 草书来源 ${item.hiraOrigin}</span><strong>${item.hira}</strong><small>${item.hiraOrigin} → ${item.hira}</small></div>
+      <div><span>片假名 · 楷书来源 ${item.kataOrigin}</span><strong>${item.kata}</strong><small>${item.kataOrigin} → ${item.kata}</small></div>
     </div>
     <p>${item.hint}</p>
-    <button class="primary-action buttonish" data-speak="${item.romaji}">播放 ${item.romaji}</button>
+    <p class="detail-note">如果这里的字体还不够像真实草书，请看页面下方的平假名演变总图，那里能看到更接近中间态的字形。</p>
+    <div class="detail-actions">
+      <button type="button" class="primary-action buttonish" data-speak="${item.romaji}">播放 ${item.romaji}</button>
+      <a class="secondary-action buttonish" href="#sources">查看字源总图</a>
+    </div>
   `;
   $("#detailDialog").showModal();
 }
@@ -205,29 +291,46 @@ function audioName(romaji) {
     re: "Re",
     ro: "Ro",
     wa: "Wa",
-    wo: "Wo"
+    wo: "Wo",
+    n: "N"
   };
   return names[romaji] || "";
+}
+
+function localAudioUrl(item) {
+  return `./audio/${item.romaji}.wav`;
+}
+
+function playAudioFile(src) {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    audio.volume = 0.95;
+    audio.addEventListener("ended", resolve, { once: true });
+    audio.addEventListener("error", () => reject(new Error(`Audio failed: ${src}`)), { once: true });
+    audio.play().then(resolve).catch(reject);
+  });
+}
+
+async function playLocalAudio(item) {
+  await playAudioFile(localAudioUrl(item));
 }
 
 async function playHumanAudio(item) {
   const name = audioName(item.romaji);
   if (!name) throw new Error("No human audio file");
-  const audio = new Audio(`https://commons.wikimedia.org/wiki/Special:Redirect/file/Ja-${name}.oga`);
-  audio.preload = "auto";
-  audio.crossOrigin = "anonymous";
-  audio.volume = 0.95;
-  await audio.play();
+  await playAudioFile(`https://commons.wikimedia.org/wiki/Special:Redirect/file/Ja-${name}.oga`);
 }
 
 function speakSystem(text) {
   if (!("speechSynthesis" in window)) return false;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text === "n" ? "ん" : text);
+  const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "ja-JP";
   utterance.rate = 0.72;
   utterance.pitch = 1.05;
-  const voice = voices.find((item) => item.voiceURI === selectedVoiceURI) || voices.find((item) => item.lang?.toLowerCase().startsWith("ja"));
+  const available = window.speechSynthesis.getVoices();
+  const voice = available.find((item) => item.voiceURI === selectedVoiceURI) || available.find((item) => item.lang?.toLowerCase().startsWith("ja")) || available[0];
   if (voice) utterance.voice = voice;
   window.speechSynthesis.speak(utterance);
   return true;
@@ -236,38 +339,73 @@ function speakSystem(text) {
 async function speakItem(item) {
   if (audioMode === "human") {
     try {
-      await playHumanAudio(item);
+      await playLocalAudio(item);
       return;
     } catch (error) {
+      try {
+      await playHumanAudio(item);
+      return;
+      } catch (remoteError) {
       speakSystem(item.hira);
       return;
+      }
     }
   }
   speakSystem(item.hira);
 }
 
 function renderVoices() {
+  const select = $("#voiceSelect");
   if (!("speechSynthesis" in window)) {
-    $("#voiceSelect").innerHTML = `<option>浏览器不支持</option>`;
+    voices = [];
+    select.innerHTML = `<option value="">浏览器不支持</option>`;
+    select.disabled = true;
+    updateAudioStatus();
     return;
   }
-  voices = window.speechSynthesis.getVoices().filter((voice) => voice.lang?.toLowerCase().startsWith("ja"));
-  const options = voices.length ? voices : window.speechSynthesis.getVoices();
-  if (!options.length) {
-    $("#voiceSelect").innerHTML = `<option value="">自动选择</option>`;
+  const allVoices = window.speechSynthesis.getVoices();
+  const japaneseVoices = allVoices.filter((voice) => voice.lang?.toLowerCase().startsWith("ja"));
+  voices = japaneseVoices.length ? japaneseVoices : allVoices;
+  if (!voices.length) {
+    select.innerHTML = `<option value="">自动选择</option>`;
+    select.disabled = true;
+    updateAudioStatus();
     return;
   }
-  $("#voiceSelect").innerHTML = options
+  select.innerHTML = voices
     .map((voice) => `<option value="${voice.voiceURI}">${voice.name}</option>`)
     .join("");
-  if (!selectedVoiceURI && options[0]) selectedVoiceURI = options[0].voiceURI;
-  $("#voiceSelect").value = selectedVoiceURI;
+  if (!selectedVoiceURI || !voices.some((voice) => voice.voiceURI === selectedVoiceURI)) selectedVoiceURI = voices[0].voiceURI;
+  select.value = selectedVoiceURI;
+  updateAudioStatus();
+}
+
+function acceptedAnswers(item) {
+  const aliases = {
+    shi: ["shi", "si"],
+    chi: ["chi", "ti"],
+    tsu: ["tsu", "tu"],
+    fu: ["fu", "hu"],
+    ji: ["ji", "zi"],
+    zu: ["zu", "du"],
+    wo: ["wo", "o"]
+  };
+  return aliases[item.romaji] || [item.romaji];
 }
 
 function pickQuizItem() {
   const items = activeItems();
-  const item = items[Math.floor(Math.random() * items.length)];
+  if (!items.length) {
+    quizItem = null;
+    $("#quizType").textContent = scriptLabel();
+    $("#quizKana").textContent = "—";
+    $("#choiceRow").innerHTML = "";
+    $("#quizFeedback").textContent = "当前筛选没有可用卡片。";
+    $("#quizFeedback").className = "quiz-feedback";
+    return;
+  }
   const showMode = mode === "both" ? (Math.random() > 0.5 ? "hiragana" : "katakana") : mode;
+  const item = weightedPick(items, (candidate) => quizWeight(candidate, showMode)) || items[0];
   quizItem = { item, showMode };
   $("#quizType").textContent = scriptLabel(showMode);
   $("#quizKana").textContent = kanaFor(item, showMode);
@@ -278,10 +416,10 @@ function pickQuizItem() {
 }
 
 function renderChoices(item) {
-  const pool = kanaData.filter((candidate) => candidate.romaji !== item.romaji).sort(() => Math.random() - 0.5).slice(0, 3);
-  const choices = [item, ...pool].sort(() => Math.random() - 0.5);
+  const pool = shuffle(activeItems().filter((candidate) => candidate.romaji !== item.romaji)).slice(0, 3);
+  const choices = shuffle([item, ...pool]);
   $("#choiceRow").innerHTML = choices
-    .map((choice, index) => `<button class="choice" data-answer="${choice.romaji}"><kbd>${index + 1}</kbd> ${choice.romaji}</button>`)
+    .map((choice, index) => `<button type="button" class="choice" data-answer="${choice.romaji}" aria-label="选择 ${choice.romaji}"><kbd>${index + 1}</kbd> ${choice.romaji}</button>`)
     .join("");
 }
 
@@ -289,30 +427,53 @@ function checkAnswer(value) {
   const answer = value.trim().toLowerCase();
   if (!answer || !quizItem) return;
   const correct = quizItem.item.romaji;
-  const accepted = correct === "wo" ? ["wo", "o"] : [correct];
+  const accepted = acceptedAnswers(quizItem.item);
+  const record = getReviewRecord(itemKey(quizItem.item, quizItem.showMode));
   stats.total += 1;
   if (accepted.includes(answer)) {
     stats.correct += 1;
     stats.streak += 1;
+    record.correct += 1;
     $("#quizFeedback").textContent = `对，是 ${correct}。`;
     $("#quizFeedback").className = "quiz-feedback good";
     updateStats();
-    setTimeout(pickQuizItem, 650);
+    setTimeout(pickQuizItem, 520);
   } else {
     stats.streak = 0;
-    $("#quizFeedback").textContent = `还差一点：这是 ${correct}。线索：${quizItem.item.hint}`;
+    record.wrong += 1;
+    $("#quizFeedback").textContent = `还差一点：这是 ${correct}。可接受输入：${accepted.join(" / ")}。线索：${quizItem.item.hint}`;
     $("#quizFeedback").className = "quiz-feedback bad";
     updateStats();
   }
 }
 
+function goToCard(nextIndex, preferUnseen = false) {
+  const items = activeItems();
+  if (!items.length) return;
+  if (preferUnseen) {
+    for (let offset = 0; offset < items.length; offset += 1) {
+      const candidateIndex = (nextIndex + offset + items.length) % items.length;
+      const candidate = items[candidateIndex];
+      const scriptMode = currentScriptForItem(candidateIndex);
+      if (!isKnown(candidate, scriptMode)) {
+        cardIndex = candidateIndex;
+        renderCard();
+        return;
+      }
+    }
+  }
+  cardIndex = (nextIndex + items.length) % items.length;
+  renderCard();
+}
+
 function markKnown() {
-  const item = activeItems()[cardIndex];
+  const items = activeItems();
+  if (!items.length) return;
+  const item = items[cardIndex];
   const key = `${item.romaji}-${currentScriptForItem(cardIndex)}`;
   if (!stats.known.includes(key)) stats.known.push(key);
   updateStats();
-  cardIndex += 1;
-  renderCard();
+  goToCard(cardIndex + 1, true);
 }
 
 function renderOriginList() {
@@ -333,7 +494,9 @@ function renderOriginList() {
 document.querySelectorAll(".segment").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".segment").forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll(".segment").forEach((item) => item.setAttribute("aria-pressed", "false"));
     button.classList.add("active");
+    button.setAttribute("aria-pressed", "true");
     mode = button.dataset.mode;
     renderGrid();
     renderCard();
@@ -341,6 +504,7 @@ document.querySelectorAll(".segment").forEach((button) => {
     saveStats();
   });
   button.classList.toggle("active", button.dataset.mode === mode);
+  button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
 });
 
 rowFilter.addEventListener("click", (event) => {
@@ -380,7 +544,9 @@ $("#speakCard").addEventListener("click", (event) => {
   event.stopPropagation();
   speakItem(activeItems()[cardIndex]);
 });
-$("#speakQuiz").addEventListener("click", () => speakItem(quizItem.item));
+$("#speakQuiz").addEventListener("click", () => {
+  if (quizItem) speakItem(quizItem.item);
+});
 
 $("#answerForm").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -422,16 +588,19 @@ $("#audioMode").value = audioMode;
 $("#audioMode").addEventListener("change", (event) => {
   audioMode = event.target.value;
   saveStats();
+  updateAudioStatus();
 });
 
 $("#voiceSelect").addEventListener("change", (event) => {
   selectedVoiceURI = event.target.value;
   saveStats();
+  updateAudioStatus();
 });
 
 document.addEventListener("keydown", (event) => {
   const target = event.target;
   const isTyping = target?.matches?.("input, textarea, select");
+  const inQuizZone = document.activeElement === $("#answerInput") || window.scrollY + window.innerHeight / 2 >= $("#quiz").offsetTop;
   if (event.key === "/" && !isTyping) {
     event.preventDefault();
     $("#answerInput").focus();
@@ -443,24 +612,49 @@ document.addEventListener("keydown", (event) => {
     flashCard.classList.toggle("flipped");
     flashCard.scrollIntoView({ block: "center", behavior: "smooth" });
   }
+  const lowerKey = event.key.toLowerCase();
+  if (["a", "s", "d", "f"].includes(lowerKey) && inQuizZone) {
+    const keyMap = { a: 0, s: 1, d: 2, f: 3 };
+    const choice = document.querySelectorAll("#choiceRow .choice")[keyMap[lowerKey]];
+    if (choice) {
+      event.preventDefault();
+      checkAnswer(choice.dataset.answer);
+      return;
+    }
+  }
+  if (lowerKey === "a") {
+    event.preventDefault();
+    goToCard(cardIndex - 1);
+    return;
+  }
   if (event.key.toLowerCase() === "s") {
     event.preventDefault();
-    const inQuiz = Math.abs($("#quiz").getBoundingClientRect().top) < Math.abs($("#study").getBoundingClientRect().top);
-    speakItem(inQuiz ? quizItem.item : activeItems()[cardIndex]);
+    const inQuiz = quizItem && Math.abs($("#quiz").getBoundingClientRect().top) < Math.abs($("#study").getBoundingClientRect().top);
+    const item = inQuiz && quizItem ? quizItem.item : activeItems()[cardIndex];
+    if (item) speakItem(item);
+    return;
   }
-  if (event.key.toLowerCase() === "j") {
+  if (lowerKey === "d") {
     event.preventDefault();
-    cardIndex -= 1;
-    renderCard();
+    markKnown();
+    return;
   }
-  if (event.key.toLowerCase() === "k") {
+  if (lowerKey === "f") {
+    event.preventDefault();
+    goToCard(cardIndex + 1);
+    return;
+  }
+  if (lowerKey === "j") {
+    event.preventDefault();
+    goToCard(cardIndex - 1);
+  }
+  if (lowerKey === "k") {
     event.preventDefault();
     markKnown();
   }
-  if (event.key.toLowerCase() === "l") {
+  if (lowerKey === "l") {
     event.preventDefault();
-    cardIndex += 1;
-    renderCard();
+    goToCard(cardIndex + 1);
   }
   if (/^[1-4]$/.test(event.key)) {
     const choice = document.querySelectorAll("#choiceRow .choice")[Number(event.key) - 1];
@@ -486,3 +680,4 @@ renderCard();
 renderOriginList();
 pickQuizItem();
 updateStats();
+updateAudioStatus();
