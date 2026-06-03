@@ -1,5 +1,5 @@
-const CACHE = "kana-origin-studio-v1";
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest"];
+const CACHE = "kana-origin-studio-v2";
+const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./origin-hiragana.svg", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));

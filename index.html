@@ -18,6 +18,7 @@
         <a href="#chart">五十音</a>
         <a href="#study">闪卡</a>
         <a href="#quiz">测验</a>
+        <a href="#drill">快捷</a>
         <a href="#sources">字源</a>
       </nav>
       <button class="icon-button" id="installBtn" title="安装到手机桌面" aria-label="安装到手机桌面">
@@ -75,6 +76,19 @@
           <button class="segment" data-mode="katakana">片假名</button>
           <button class="segment" data-mode="both">一起练</button>
         </div>
+        <div class="audio-controls" aria-label="发音设置">
+          <label>
+            发音
+            <select id="audioMode">
+              <option value="human">真人音频</option>
+              <option value="system">系统语音</option>
+            </select>
+          </label>
+          <label>
+            音色
+            <select id="voiceSelect"></select>
+          </label>
+        </div>
         <div class="row-filter" id="rowFilter" aria-label="行选择"></div>
       </section>
 
@@ -96,7 +110,7 @@
           <div class="card-face front">
             <span id="cardScriptLabel">平假名</span>
             <strong id="cardKana">あ</strong>
-            <small>点击翻面 / 空格翻面</small>
+            <small>空格翻面 · S 发音 · J/K/L 循环</small>
           </div>
           <div class="card-face back">
             <span id="cardRomaji">a</span>
@@ -104,6 +118,10 @@
               <div>
                 <small id="cardOriginLabel">草书来源</small>
                 <strong id="cardOrigin">安</strong>
+              </div>
+              <div>
+                <small>形变路径</small>
+                <strong id="cardPath">安 → あ</strong>
               </div>
               <div>
                 <small>发音</small>
@@ -141,12 +159,36 @@
         </div>
       </section>
 
+      <section class="drill" id="drill">
+        <div class="section-head">
+          <p class="eyebrow">Keyboard Loop</p>
+          <h2>手不用离开键盘</h2>
+          <p>适合电脑上快速刷：先看字，空格翻面，S 听音，K 标记记住，L 下一张。测验时直接按 1-4 选答案。</p>
+        </div>
+        <div class="shortcut-grid" aria-label="快捷键说明">
+          <div><kbd>Space</kbd><span>翻牌</span></div>
+          <div><kbd>S</kbd><span>播放发音</span></div>
+          <div><kbd>J</kbd><span>上一张</span></div>
+          <div><kbd>K</kbd><span>记住</span></div>
+          <div><kbd>L</kbd><span>下一张</span></div>
+          <div><kbd>1-4</kbd><span>测验选项</span></div>
+          <div><kbd>/</kbd><span>输入答案</span></div>
+          <div><kbd>Enter</kbd><span>检查</span></div>
+        </div>
+      </section>
+
       <section class="drawer" id="sources">
         <div class="section-head">
           <p class="eyebrow">Origin</p>
           <h2>字源速查</h2>
-          <p>平假名看草书化的来源汉字；片假名看楷书汉字中被截取的部分。</p>
+          <p>平假名看草书化的来源汉字；片假名看楷书汉字中被截取的部分。下面的演变图用来校正“草书中间态”的视觉记忆。</p>
         </div>
+        <figure class="origin-atlas">
+          <img src="./origin-hiragana.svg" alt="平假名从万叶假名草书演变而来的总览图" />
+          <figcaption>
+            平假名演变图：来源汉字到草书化假名的总览。来自 Wikimedia Commons，作者 Pmx，CC BY-SA/GFDL。
+          </figcaption>
+        </figure>
         <div class="origin-list" id="originList"></div>
       </section>
     </main>
@@ -165,7 +207,7 @@
         <a href="https://kana.pro/" target="_blank" rel="noreferrer">Kana Pro</a>
         的测验机制，以及
         <a href="https://en.wikipedia.org/wiki/Man%27y%C5%8Dgana" target="_blank" rel="noreferrer">万叶假名字源表</a>。
-        发音使用浏览器内置日语语音。
+        发音优先使用 Wikimedia Commons 真人假名音频，失败时回退到浏览器内置日语语音。
       </p>
     </footer>
 

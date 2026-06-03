@@ -53,6 +53,9 @@ let row = "全部";
 let cardIndex = Number(localStorage.getItem("kana-card-index") || 0);
 let quizItem = null;
 let deferredInstallPrompt = null;
+let audioMode = localStorage.getItem("kana-audio-mode") || "human";
+let selectedVoiceURI = localStorage.getItem("kana-voice-uri") || "";
+let voices = [];
 const stats = JSON.parse(localStorage.getItem("kana-stats") || '{"known":[],"correct":0,"total":0,"streak":0}');
 
 const $ = (selector) => document.querySelector(selector);
@@ -91,6 +94,8 @@ function saveStats() {
   localStorage.setItem("kana-stats", JSON.stringify(stats));
   localStorage.setItem("kana-mode", mode);
   localStorage.setItem("kana-card-index", String(cardIndex));
+  localStorage.setItem("kana-audio-mode", audioMode);
+  localStorage.setItem("kana-voice-uri", selectedVoiceURI);
 }
 
 function updateStats() {
@@ -133,6 +138,7 @@ function renderCard() {
   $("#cardRomaji").textContent = item.romaji;
   $("#cardOriginLabel").textContent = originLabel(showMode);
   $("#cardOrigin").textContent = originFor(item, showMode);
+  $("#cardPath").textContent = `${originFor(item, showMode)} → ${kanaFor(item, showMode)}`;
   $("#cardMnemonic").textContent = item.hint;
   flashCard.classList.remove("flipped");
   saveStats();
@@ -153,13 +159,105 @@ function showDetail(globalIndex) {
   $("#detailDialog").showModal();
 }
 
-function speak(text) {
-  if (!("speechSynthesis" in window)) return;
+function audioName(romaji) {
+  const names = {
+    a: "A",
+    i: "I",
+    u: "U",
+    e: "E",
+    o: "O",
+    ka: "Ka",
+    ki: "Ki",
+    ku: "Ku",
+    ke: "Ke",
+    ko: "Ko",
+    sa: "Sa",
+    shi: "Shi",
+    su: "Su",
+    se: "Se",
+    so: "So",
+    ta: "Ta",
+    chi: "Chi",
+    tsu: "Tsu",
+    te: "Te",
+    to: "To",
+    na: "Na",
+    ni: "Ni",
+    nu: "Nu",
+    ne: "Ne",
+    no: "No",
+    ha: "Ha",
+    hi: "Hi",
+    fu: "Fu",
+    he: "He",
+    ho: "Ho",
+    ma: "Ma",
+    mi: "Mi",
+    mu: "Mu",
+    me: "Me",
+    mo: "Mo",
+    ya: "Ya",
+    yu: "Yu",
+    yo: "Yo",
+    ra: "Ra",
+    ri: "Ri",
+    ru: "Ru",
+    re: "Re",
+    ro: "Ro",
+    wa: "Wa",
+    wo: "Wo"
+  };
+  return names[romaji] || "";
+}
+
+async function playHumanAudio(item) {
+  const name = audioName(item.romaji);
+  if (!name) throw new Error("No human audio file");
+  const audio = new Audio(`https://commons.wikimedia.org/wiki/Special:Redirect/file/Ja-${name}.oga`);
+  audio.preload = "auto";
+  audio.crossOrigin = "anonymous";
+  audio.volume = 0.95;
+  await audio.play();
+}
+
+function speakSystem(text) {
+  if (!("speechSynthesis" in window)) return false;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text === "n" ? "ん" : text);
   utterance.lang = "ja-JP";
-  utterance.rate = 0.78;
+  utterance.rate = 0.72;
+  utterance.pitch = 1.05;
+  const voice = voices.find((item) => item.voiceURI === selectedVoiceURI) || voices.find((item) => item.lang?.toLowerCase().startsWith("ja"));
+  if (voice) utterance.voice = voice;
   window.speechSynthesis.speak(utterance);
+  return true;
+}
+
+async function speakItem(item) {
+  if (audioMode === "human") {
+    try {
+      await playHumanAudio(item);
+      return;
+    } catch (error) {
+      speakSystem(item.hira);
+      return;
+    }
+  }
+  speakSystem(item.hira);
+}
+
+function renderVoices() {
+  if (!("speechSynthesis" in window)) {
+    $("#voiceSelect").innerHTML = `<option>浏览器不支持</option>`;
+    return;
+  }
+  voices = window.speechSynthesis.getVoices().filter((voice) => voice.lang?.toLowerCase().startsWith("ja"));
+  const options = voices.length ? voices : window.speechSynthesis.getVoices();
+  $("#voiceSelect").innerHTML = options
+    .map((voice) => `<option value="${voice.voiceURI}">${voice.name}</option>`)
+    .join("");
+  if (!selectedVoiceURI && options[0]) selectedVoiceURI = options[0].voiceURI;
+  $("#voiceSelect").value = selectedVoiceURI;
 }
 
 function pickQuizItem() {
@@ -178,7 +276,9 @@ function pickQuizItem() {
 function renderChoices(item) {
   const pool = kanaData.filter((candidate) => candidate.romaji !== item.romaji).sort(() => Math.random() - 0.5).slice(0, 3);
   const choices = [item, ...pool].sort(() => Math.random() - 0.5);
-  $("#choiceRow").innerHTML = choices.map((choice) => `<button class="choice" data-answer="${choice.romaji}">${choice.romaji}</button>`).join("");
+  $("#choiceRow").innerHTML = choices
+    .map((choice, index) => `<button class="choice" data-answer="${choice.romaji}"><kbd>${index + 1}</kbd> ${choice.romaji}</button>`)
+    .join("");
 }
 
 function checkAnswer(value) {
@@ -274,9 +374,9 @@ $("#nextCard").addEventListener("click", () => {
 $("#knownCard").addEventListener("click", markKnown);
 $("#speakCard").addEventListener("click", (event) => {
   event.stopPropagation();
-  speak(activeItems()[cardIndex].hira);
+  speakItem(activeItems()[cardIndex]);
 });
-$("#speakQuiz").addEventListener("click", () => speak(kanaFor(quizItem.item, quizItem.showMode)));
+$("#speakQuiz").addEventListener("click", () => speakItem(quizItem.item));
 
 $("#answerForm").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -290,7 +390,10 @@ $("#choiceRow").addEventListener("click", (event) => {
 
 $("#detailBody").addEventListener("click", (event) => {
   const button = event.target.closest("[data-speak]");
-  if (button) speak(button.dataset.speak);
+  if (button) {
+    const item = kanaData.find((candidate) => candidate.romaji === button.dataset.speak);
+    if (item) speakItem(item);
+  }
 });
 
 $("#closeDialog").addEventListener("click", () => $("#detailDialog").close());
@@ -311,8 +414,66 @@ $("#installBtn").addEventListener("click", async () => {
   deferredInstallPrompt = null;
 });
 
+$("#audioMode").value = audioMode;
+$("#audioMode").addEventListener("change", (event) => {
+  audioMode = event.target.value;
+  saveStats();
+});
+
+$("#voiceSelect").addEventListener("change", (event) => {
+  selectedVoiceURI = event.target.value;
+  saveStats();
+});
+
+document.addEventListener("keydown", (event) => {
+  const target = event.target;
+  const isTyping = target?.matches?.("input, textarea, select");
+  if (event.key === "/" && !isTyping) {
+    event.preventDefault();
+    $("#answerInput").focus();
+    return;
+  }
+  if (isTyping) return;
+  if (event.key === " ") {
+    event.preventDefault();
+    flashCard.classList.toggle("flipped");
+    flashCard.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+  if (event.key.toLowerCase() === "s") {
+    event.preventDefault();
+    const inQuiz = Math.abs($("#quiz").getBoundingClientRect().top) < Math.abs($("#study").getBoundingClientRect().top);
+    speakItem(inQuiz ? quizItem.item : activeItems()[cardIndex]);
+  }
+  if (event.key.toLowerCase() === "j") {
+    event.preventDefault();
+    cardIndex -= 1;
+    renderCard();
+  }
+  if (event.key.toLowerCase() === "k") {
+    event.preventDefault();
+    markKnown();
+  }
+  if (event.key.toLowerCase() === "l") {
+    event.preventDefault();
+    cardIndex += 1;
+    renderCard();
+  }
+  if (/^[1-4]$/.test(event.key)) {
+    const choice = document.querySelectorAll("#choiceRow .choice")[Number(event.key) - 1];
+    if (choice) {
+      event.preventDefault();
+      checkAnswer(choice.dataset.answer);
+    }
+  }
+});
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
+}
+
+renderVoices();
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.addEventListener("voiceschanged", renderVoices);
 }
 
 renderRows();
