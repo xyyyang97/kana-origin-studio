@@ -47,6 +47,64 @@ const kanaData = [
   { row: "鼻音", romaji: "n", hira: "ん", kata: "ン", hiraOrigin: "无", kataOrigin: "尓", hint: "无的草写顺势成ん；尓的右下收笔像ン。" }
 ];
 
+const examples = {
+  a: "あさ · 朝 · 早晨",
+  i: "いえ · 家 · 家",
+  u: "うみ · 海 · 海",
+  e: "えき · 駅 · 车站",
+  o: "おちゃ · お茶 · 茶",
+  ka: "かお · 顔 · 脸",
+  ki: "き · 木 · 树",
+  ku: "くに · 国 · 国家",
+  ke: "け · 毛 · 毛发",
+  ko: "こえ · 声 · 声音",
+  sa: "さかな · 魚 · 鱼",
+  shi: "しお · 塩 · 盐",
+  su: "すし · 寿司 · 寿司",
+  se: "せき · 席 · 座位",
+  so: "そら · 空 · 天空",
+  ta: "たね · 種 · 种子",
+  chi: "ちず · 地図 · 地图",
+  tsu: "つき · 月 · 月亮",
+  te: "て · 手 · 手",
+  to: "とり · 鳥 · 鸟",
+  na: "なつ · 夏 · 夏天",
+  ni: "にく · 肉 · 肉",
+  nu: "いぬ · 犬 · 狗",
+  ne: "ねこ · 猫 · 猫",
+  no: "のど · 喉 · 喉咙",
+  ha: "はな · 花 · 花",
+  hi: "ひ · 火 · 火",
+  fu: "ふね · 船 · 船",
+  he: "へや · 部屋 · 房间",
+  ho: "ほし · 星 · 星星",
+  ma: "まど · 窓 · 窗",
+  mi: "みず · 水 · 水",
+  mu: "むし · 虫 · 昆虫",
+  me: "め · 目 · 眼睛",
+  mo: "もり · 森 · 森林",
+  ya: "やま · 山 · 山",
+  yu: "ゆき · 雪 · 雪",
+  yo: "よる · 夜 · 夜晚",
+  ra: "らいねん · 来年 · 明年",
+  ri: "りんご · 林檎 · 苹果",
+  ru: "るす · 留守 · 不在家",
+  re: "れきし · 歴史 · 历史",
+  ro: "ろうそく · 蝋燭 · 蜡烛",
+  wa: "わに · 鰐 · 鳄鱼",
+  wo: "ほんをよむ · 本を読む · 读书",
+  n: "ほん · 本 · 书"
+};
+
+const contrastPairs = [
+  { label: "平假名", note: "さ 更开口，き 更像连续折笔。", items: ["さ", "き"] },
+  { label: "平假名", note: "ぬ 更像封口回环，め 更像绕了一圈后收回。", items: ["ぬ", "め"] },
+  { label: "片假名", note: "シ 的短点更偏左上，ツ 像上方两点往下掉。", items: ["シ", "ツ"] },
+  { label: "片假名", note: "ソ 更分开，ン 更像一条斜线配一个短点。", items: ["ソ", "ン"] },
+  { label: "平假名", note: "れ 比较干脆，ね 多一个内部回环。", items: ["れ", "ね"] },
+  { label: "片假名", note: "ク 像单个弯角，ケ 更像分开的两笔。", items: ["ク", "ケ"] }
+];
+
 const rows = ["全部", ...new Set(kanaData.map((item) => item.row))];
 let mode = localStorage.getItem("kana-mode") || "hiragana";
 let row = "全部";
@@ -221,6 +279,7 @@ function renderCard() {
   $("#cardOrigin").textContent = originFor(item, showMode);
   $("#cardPath").textContent = `${originFor(item, showMode)} → ${kanaFor(item, showMode)}`;
   $("#cardMnemonic").textContent = mastered ? `${item.hint} 这个卡片已经标记过掌握了，可以继续复习巩固。` : item.hint;
+  $("#cardExample").textContent = `例词：${examples[item.romaji] || "暂未添加"}`;
   flashCard.dataset.mastered = String(mastered);
   flashCard.classList.remove("flipped");
   saveStats();
@@ -236,6 +295,7 @@ function showDetail(globalIndex) {
       <div><span>片假名 · 楷书来源 ${item.kataOrigin}</span><strong>${item.kata}</strong><small>${item.kataOrigin} → ${item.kata}</small></div>
     </div>
     <p>${item.hint}</p>
+    <div class="word-chip">例词：${examples[item.romaji] || "暂未添加"}</div>
     <p class="detail-note">如果这里的字体还不够像真实草书，请看页面下方的平假名演变总图，那里能看到更接近中间态的字形。</p>
     <div class="detail-actions">
       <button type="button" class="primary-action buttonish" data-speak="${item.romaji}">播放 ${item.romaji}</button>
@@ -478,6 +538,38 @@ function renderOriginList() {
     .join("");
 }
 
+function lookupKana(symbol) {
+  return kanaData.find((item) => item.hira === symbol || item.kata === symbol);
+}
+
+function renderContrastGrid() {
+  const host = $("#contrastGrid");
+  if (!host) return;
+  host.innerHTML = contrastPairs
+    .map((pair) => `
+      <article class="contrast-card">
+        <div class="contrast-top">
+          <span class="contrast-tag">${pair.label}</span>
+        </div>
+        <div class="contrast-body">
+          ${pair.items.map((symbol) => {
+            const entry = lookupKana(symbol);
+            if (!entry) return "";
+            return `
+              <div class="contrast-item">
+                <small>${entry.romaji}</small>
+                <strong>${symbol}</strong>
+                <span>${examples[entry.romaji] || ""}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+        <p class="contrast-note">${pair.note}</p>
+      </article>
+    `)
+    .join("");
+}
+
 document.querySelectorAll(".segment").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".segment").forEach((item) => item.classList.remove("active"));
@@ -665,6 +757,7 @@ renderRows();
 renderGrid();
 renderCard();
 renderOriginList();
+renderContrastGrid();
 pickQuizItem();
 updateStats();
 updateAudioStatus();
