@@ -1,0 +1,10 @@
+{
+  "name": "Kana Origin Studio",
+  "short_name": "Kana Origin",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "description": "五十音图、假名字源、发音、闪卡和测验练习。",
+  "icons": []
+}
