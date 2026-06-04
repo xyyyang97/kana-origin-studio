@@ -24,7 +24,7 @@
     <link rel="canonical" href="https://xyyyang97.github.io/kana-origin-studio/" />
     <link rel="preconnect" href="https://commons.wikimedia.org" />
     <link rel="preconnect" href="https://upload.wikimedia.org" />
-    <link rel="stylesheet" href="./styles.css?v=20260604d" />
+    <link rel="stylesheet" href="./styles.css?v=20260604e" />
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -38,6 +38,7 @@
         <a href="#chart">五十音</a>
         <a href="#study">闪卡</a>
         <a href="#quiz">测验</a>
+        <a href="#phrases">短语</a>
         <a href="#progress">薄弱项</a>
         <a href="#sources">字源</a>
       </nav>
@@ -275,6 +276,33 @@
         <div class="contrast-grid" id="contrastGrid" aria-label="易混淆字对"></div>
       </section>
 
+      <section class="phrases-section" id="phrases">
+        <div class="section-head">
+          <p class="eyebrow">150 Basic Japanese Phrases</p>
+          <h2>学完假名，马上开始说。</h2>
+          <p>顶部看英语意思，中间看日语写法，下面看罗马音。按生活场景练习，也可以随机抽一句。</p>
+        </div>
+        <div class="phrase-filters" id="phraseFilters" aria-label="短语分类"></div>
+        <article class="phrase-stage">
+          <div class="phrase-meaning">
+            <span id="phraseCategory">Greetings</span>
+            <strong id="phraseEnglish">Hello.</strong>
+          </div>
+          <div class="phrase-writing">
+            <strong id="phraseJapanese">こんにちは</strong>
+            <span id="phraseRomaji">konnichiwa</span>
+          </div>
+          <div class="phrase-controls">
+            <button class="secondary-action buttonish" id="prevPhrase" type="button">上一句</button>
+            <button class="sound-button" id="speakPhrase" type="button">播放发音</button>
+            <button class="secondary-action buttonish" id="randomPhrase" type="button">随机</button>
+            <button class="primary-action buttonish" id="nextPhrase" type="button">下一句</button>
+            <strong id="phraseCounter">1 / 150</strong>
+          </div>
+        </article>
+        <div class="phrase-list" id="phraseList" aria-label="基础日语短语列表"></div>
+      </section>
+
       <section class="drawer" id="sources">
         <div class="section-head">
           <p class="eyebrow">Origin</p>
@@ -341,7 +369,8 @@
       </p>
     </footer>
 
-    <script src="./app.js?v=20260604d"></script>
-    <script src="./academy.js?v=20260604d"></script>
+    <script src="./app.js?v=20260604e"></script>
+    <script src="./academy.js?v=20260604e"></script>
+    <script src="./phrases.js?v=20260604e"></script>
   </body>
 </html>
