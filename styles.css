@@ -693,6 +693,61 @@ h2 {
   padding-bottom: 72px;
 }
 
+.poster-section {
+  padding-bottom: 48px;
+}
+
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 clamp(18px, 6vw, 92px);
+}
+
+.study-poster {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.study-poster a {
+  display: block;
+  overflow: auto;
+  background: #f7f7f7;
+}
+
+.study-poster img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1280 / 989;
+  object-fit: contain;
+  transition: transform 220ms ease;
+}
+
+.study-poster a:hover img {
+  transform: scale(1.015);
+}
+
+.study-poster figcaption {
+  display: grid;
+  gap: 5px;
+  padding: 16px 18px 20px;
+}
+
+.study-poster figcaption span,
+.poster-credit {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.poster-credit {
+  margin: 14px clamp(18px, 6vw, 92px) 0;
+  font-size: 13px;
+}
+
 .phrase-filters {
   display: flex;
   gap: 6px;
@@ -1438,6 +1493,10 @@ footer a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .poster-grid {
+    grid-template-columns: 1fr;
+  }
+
   .atlas-grid {
     grid-template-columns: 1fr;
   }
@@ -1562,6 +1621,10 @@ footer a {
 
   .phrase-list {
     grid-template-columns: 1fr;
+  }
+
+  .study-poster a {
+    max-height: 72vh;
   }
 
   .origin-row {
