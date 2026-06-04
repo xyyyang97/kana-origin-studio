@@ -1,9 +1,10 @@
-const CACHE = "kana-origin-studio-v6";
+const CACHE = "kana-origin-studio-v7";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=20260604c",
-  "./app.js?v=20260604c",
+  "./styles.css?v=20260604d",
+  "./app.js?v=20260604d",
+  "./academy.js?v=20260604d",
   "./origin-hiragana.svg",
   "./origin-katakana.svg",
   "./manifest.webmanifest",

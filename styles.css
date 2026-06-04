@@ -346,6 +346,349 @@ h2 {
   font-size: 14px;
 }
 
+.today-section,
+.progress-section {
+  padding-bottom: 54px;
+}
+
+.today-layout,
+.progress-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 clamp(18px, 6vw, 92px);
+}
+
+.today-plan,
+.syllabary-map,
+.weak-panel,
+.mode-panel {
+  display: grid;
+  gap: 20px;
+  padding: clamp(20px, 4vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.today-plan-top,
+.map-head,
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+}
+
+.today-plan h3,
+.syllabary-map h3,
+.weak-panel h3,
+.mode-panel h3,
+.detail-body h3 {
+  margin: 5px 0 0;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.08;
+}
+
+.today-plan small,
+.syllabary-map small,
+.weak-panel small,
+.mode-panel small {
+  color: var(--muted);
+}
+
+.today-ring {
+  --progress: 0deg;
+  position: relative;
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(var(--blue) var(--progress), rgba(29, 29, 31, 0.08) 0);
+}
+
+.today-ring::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: white;
+}
+
+.today-ring strong {
+  position: relative;
+  z-index: 1;
+}
+
+.today-steps {
+  display: grid;
+  gap: 8px;
+}
+
+.today-steps > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 66px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.today-steps > div > strong {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+}
+
+.today-steps span,
+.weak-list button span {
+  display: grid;
+  gap: 3px;
+}
+
+.today-steps small,
+.weak-list small {
+  color: var(--muted);
+}
+
+.map-track {
+  display: grid;
+  gap: 18px;
+}
+
+.map-track div {
+  display: grid;
+  gap: 8px;
+}
+
+.map-track span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.map-track progress {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(29, 29, 31, 0.08);
+}
+
+.map-track progress::-webkit-progress-bar {
+  background: rgba(29, 29, 31, 0.08);
+  border-radius: 999px;
+}
+
+.map-track progress::-webkit-progress-value {
+  background: var(--blue);
+  border-radius: 999px;
+}
+
+.weak-list {
+  display: grid;
+  gap: 8px;
+}
+
+.weak-list button {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  align-items: center;
+  min-height: 82px;
+  gap: 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.weak-list button strong {
+  font-size: 38px;
+}
+
+.empty-state {
+  display: grid;
+  gap: 7px;
+  min-height: 160px;
+  place-content: center;
+  text-align: center;
+  color: var(--muted);
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mode-grid button,
+.extended-grid button {
+  display: grid;
+  gap: 8px;
+  min-height: 118px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mode-grid strong {
+  font-size: 30px;
+}
+
+.mode-grid span,
+.extended-grid span {
+  color: var(--muted);
+}
+
+.focus-dialog {
+  width: min(920px, 100vw);
+  height: min(760px, 100dvh);
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xl);
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.focus-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(12px);
+}
+
+.focus-shell {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+.focus-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px clamp(18px, 4vw, 34px) 14px;
+}
+
+.focus-head div {
+  display: grid;
+  gap: 3px;
+}
+
+.focus-head small,
+.focus-kicker {
+  color: var(--muted);
+}
+
+.focus-bar {
+  height: 4px;
+  background: rgba(29, 29, 31, 0.08);
+}
+
+.focus-bar span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--blue);
+  transition: width 220ms ease;
+}
+
+.focus-main {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 20px;
+  padding: 26px;
+  text-align: center;
+}
+
+.focus-prompt {
+  max-width: 100%;
+  font-size: clamp(92px, 20vw, 220px);
+  line-height: 0.9;
+  overflow-wrap: anywhere;
+}
+
+.focus-choices {
+  width: min(620px, 100%);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.focus-choices button {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.focus-form {
+  width: min(620px, 100%);
+  display: flex;
+  gap: 10px;
+}
+
+.focus-form input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.focus-feedback {
+  min-height: 24px;
+  margin: 0;
+}
+
+.focus-feedback.good {
+  color: var(--green);
+}
+
+.focus-feedback.bad {
+  color: var(--red);
+}
+
+.extended-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0 28px;
+}
+
+.extended-grid button {
+  min-height: 88px;
+}
+
+.extended-grid strong {
+  font-size: 36px;
+}
+
 .control-band {
   position: sticky;
   top: 54px;
@@ -941,7 +1284,9 @@ footer a {
 
 @media (max-width: 920px) {
   .hero,
-  .study-layout {
+  .study-layout,
+  .today-layout,
+  .progress-layout {
     grid-template-columns: 1fr;
   }
 
@@ -1048,6 +1393,31 @@ footer a {
 
   .contrast-body {
     grid-template-columns: 1fr;
+  }
+
+  .today-plan-top,
+  .map-head,
+  .panel-head {
+    align-items: flex-start;
+  }
+
+  .mode-grid,
+  .focus-choices {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .focus-dialog {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .focus-prompt {
+    font-size: clamp(82px, 32vw, 150px);
+  }
+
+  .extended-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .origin-row {
