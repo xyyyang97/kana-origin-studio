@@ -152,6 +152,10 @@ a:hover {
   color: var(--ink);
 }
 
+.mobile-tabbar {
+  display: none;
+}
+
 .icon-button {
   display: grid;
   place-items: center;
@@ -1638,11 +1642,11 @@ footer a {
 
 @media (max-width: 680px) {
   html {
-    scroll-padding-top: 102px;
+    scroll-padding-top: 96px;
   }
 
   .topbar {
-    flex-wrap: wrap;
+    min-height: 50px;
     padding-top: 10px;
     padding-bottom: 10px;
   }
@@ -1651,12 +1655,65 @@ footer a {
     display: none;
   }
 
+  .mobile-tabbar {
+    position: fixed;
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 12;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    padding: 7px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 58px rgba(0, 0, 0, 0.18);
+    backdrop-filter: saturate(180%) blur(24px);
+  }
+
+  .mobile-tabbar a {
+    min-height: 48px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 2px;
+    border-radius: 16px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .mobile-tabbar a:active {
+    background: rgba(0, 113, 227, 0.1);
+    color: var(--blue);
+  }
+
+  .mobile-tabbar span {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .mobile-tabbar strong {
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  body:has(.mobile-tabbar) main {
+    padding-bottom: 92px;
+  }
+
+  body:has(.mobile-tabbar) footer {
+    padding-bottom: calc(108px + env(safe-area-inset-bottom));
+  }
+
   .brand {
     max-width: 72vw;
   }
 
   .hero {
     min-height: auto;
+    padding-top: 42px;
     padding-bottom: 48px;
   }
 
@@ -1681,26 +1738,49 @@ footer a {
 
   .control-band {
     display: grid;
-    top: 54px;
+    top: 50px;
+    gap: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .segmented,
+  .audio-controls {
+    width: 100%;
+  }
+
+  .audio-controls {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .kana-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
+    padding-bottom: 28px;
   }
 
   .kana-cell {
-    min-height: 158px;
+    min-height: 146px;
     padding: 12px;
   }
 
   .study-layout,
   .quiz {
-    padding-bottom: 52px;
+    padding-bottom: 44px;
   }
 
   .flash-card {
-    min-height: 460px;
+    min-height: 430px;
+  }
+
+  .card-face {
+    gap: 14px;
+    border-radius: 28px;
+  }
+
+  #cardRomaji {
+    font-size: 58px;
   }
 
   .origin-pair,
@@ -1742,15 +1822,50 @@ footer a {
   }
 
   .phrase-meaning {
-    min-height: 190px;
+    min-height: 160px;
+    padding: 44px 18px 24px;
+  }
+
+  .phrase-meaning span {
+    left: 14px;
+    top: 14px;
   }
 
   .phrase-writing {
-    min-height: 250px;
+    min-height: 210px;
+    padding: 26px 18px;
+  }
+
+  .phrase-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+  }
+
+  .phrase-controls .buttonish,
+  .phrase-controls .sound-button {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .phrase-controls > strong {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
   }
 
   .phrase-list {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .phrase-list button {
+    min-height: 112px;
+    padding: 14px;
+  }
+
+  .phrase-list strong {
+    font-size: 24px;
   }
 
   .study-poster a {
@@ -1758,7 +1873,12 @@ footer a {
   }
 
   .guide-preview {
-    min-height: 220px;
+    min-height: 190px;
+  }
+
+  .guide-card {
+    border-radius: 28px;
+    padding: 18px;
   }
 
   .guide-actions a {
@@ -1781,16 +1901,27 @@ footer a {
   }
 
   .reader-main {
-    padding: 12px;
+    height: calc(100dvh - 58px);
+    padding: 10px;
   }
 
   .reader-title {
     display: block;
+    padding-bottom: 10px;
+  }
+
+  .reader-title h1 {
+    font-size: 21px;
   }
 
   .reader-title p {
     margin-top: 6px;
     font-size: 13px;
+  }
+
+  .pdf-reader {
+    min-height: 0;
+    border-radius: 6px;
   }
 
   .origin-row {

@@ -1,11 +1,11 @@
-const CACHE = "kana-origin-studio-v10";
+const CACHE = "kana-origin-studio-v11";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=20260604g",
-  "./app.js?v=20260604g",
-  "./academy.js?v=20260604g",
-  "./phrases.js?v=20260604g",
+  "./styles.css?v=20260605a",
+  "./app.js?v=20260605a",
+  "./academy.js?v=20260605a",
+  "./phrases.js?v=20260605a",
   "./assets/tofugu-hiragana-chart.jpg",
   "./assets/tofugu-hiragana-mnemonic-chart.jpg",
   "./origin-hiragana.svg",
