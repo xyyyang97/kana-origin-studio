@@ -2,6 +2,8 @@
 
 一个为中文母语者设计的日语假名学习站，用汉字字源、真人发音、翻牌和测验，把五十音记忆做得更稳定。
 
+> 这个仓库已标记为 GitHub Template（点仓库页 "Use this template" 或 `gh repo create <新名字> --template xyyyang97/kana-origin-studio` 一键生成新项目）。做同类的纯静态学习/小工具类站点时，可复用的部分是：PWA 结构（`manifest.webmanifest` + `sw.js`）、键盘快捷键交互模式、真人音频优先/系统语音兜底的降级逻辑、GitHub Pages 发布流程。假名相关内容（`audio/`、`origin-*.svg`、`phrases.js` 等）换新项目时需要替换。
+
 当前重点：
 
 - 苹果官网风格的静态 H5 页面
@@ -31,22 +33,22 @@
 如果需要本地 server：
 
 ```bash
-cd "/Users/andysong/iCloud Drive (Archive)/Documents/New project/kana-origin-studio"
 python3 -m http.server 4173
 ```
 
 ## 发布到 GitHub Pages
 
-这个仓库已经是纯静态结构，可以直接发布到 GitHub Pages。
+这个仓库已经是纯静态结构，已经在用 GitHub Pages 发布：https://xyyyang97.github.io/kana-origin-studio/
 
 常用流程：
 
 ```bash
-cd "/Users/andysong/iCloud Drive (Archive)/Documents/New project/kana-origin-studio"
 git add .
-git commit -m "Improve kana study UX and audio flow"
+git commit -m "..."
 git push origin main
 ```
+
+push 到 `main` 后 Pages 会自动重新构建，一两分钟内生效。
 
 ## 后续可继续做
 
